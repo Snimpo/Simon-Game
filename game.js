@@ -1,66 +1,66 @@
 var userClickedPattern = [];
+var randomPattern = [];
 var level = 0;
 
-$("body").on("keydown", function nextSequence() {
+$("body").on("keydown", nextSequence()); 
 
-    
+function nextSequence(){
 
-    $("#level-title").text("Level "+level);
+    $("#level-title").text("Level " + level);
 
-        var gamePattern = [];
+    var gamePattern = [];
 
-        var randomNumber = Math.floor(Math.random() * 4);
+    var randomNumber = Math.floor(Math.random() * 4);
 
-        var buttonColours = ["red", "blue", "green", "yellow"];
+    var buttonColours = ["red", "blue", "green", "yellow"];
 
-        var randomChosenColor = buttonColours[randomNumber];
+    var randomChosenColor = buttonColours[randomNumber];
 
-        gamePattern.push(randomChosenColor);
+    gamePattern.push(randomChosenColor);
 
+    randomSavedPattern(randomChosenColor);
+    var copy = randomPattern.map((x)=>x) ; // Shallow copy
 
-        switch (randomChosenColor) {
-            case "red":
-                var crash = new Audio("sounds/red.mp3");
-                crash.play();
-                animatePress(randomChosenColor);
-                break;
-            case "blue":
-                var kick = new Audio("sounds/blue.mp3");
-                kick.play();
-                animatePress(randomChosenColor);
-                break;
-            case "green":
-                var snare = new Audio("sounds/green.mp3");
-                snare.play();
-                animatePress(randomChosenColor);
-                break;
-            case "yellow":
-                var tom1 = new Audio("sounds/yellow.mp3");
-                tom1.play();
-                animatePress(randomChosenColor);
-                break;
-    
-            default:
-                console.log("error");
-
-
-        
+    //alert(copy);
+    for(var i = 0; i < randomPattern.length;i++){
+        task(i);
     }
-    level = level+1;
-});
+    level = level + 1;
+
+    
+}
+
+
+function task(i) {
+    setTimeout(function() {
+        playSound(randomPattern[i]);
+    }, 700 * i);
+}
+
+
 
 
 
 
 $(".btn").click(function () {
+
     var userChosenColour = this.id;
 
     playSound(userChosenColour);
 
-    savedPattern(userChosenColour);
+    userSavedPattern(userChosenColour);
+
+    checkAnswer();
+    
+
 });
 
-function savedPattern(color) {
+function randomSavedPattern(randomColor) {
+    randomPattern.push(randomColor);
+    console.log(randomPattern);
+}
+
+function userSavedPattern(color) {
     userClickedPattern.push(color);
     console.log(userClickedPattern);
 }
@@ -106,5 +106,22 @@ function playSound(name) {
             console.log("error");
     }
 
+
 }
-//nextSequence();
+
+//This function compares the users imput with the random imput pattern.
+function checkAnswer() {
+
+    var answer = (userClickedPattern.toString() === randomPattern.toString());
+
+    if (answer == true){
+        setTimeout(() => {
+            nextSequence();
+        }
+            , 1000);
+    } else {
+        alert("You have lost!")
+    }
+
+
+}
