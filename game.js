@@ -1,10 +1,12 @@
 var userClickedPattern = [];
 var randomPattern = [];
 var level = 0;
+var clickedColor;
+var userChosenColour;
 
-$("body").on("keydown", nextSequence()); 
+$("body").on("keydown", nextSequence());
 
-function nextSequence(){
+function nextSequence() {
 
     $("#level-title").text("Level " + level);
 
@@ -19,20 +21,20 @@ function nextSequence(){
     gamePattern.push(randomChosenColor);
 
     randomSavedPattern(randomChosenColor);
-    var copy = randomPattern.map((x)=>x) ; // Shallow copy
+
 
     //alert(copy);
-    for(var i = 0; i < randomPattern.length;i++){
+    for (var i = 0; i < randomPattern.length; i++) {
         task(i);
     }
-    level = level + 1;
 
-    
+
+
 }
 
 
 function task(i) {
-    setTimeout(function() {
+    setTimeout(function () {
         playSound(randomPattern[i]);
     }, 700 * i);
 }
@@ -44,14 +46,17 @@ function task(i) {
 
 $(".btn").click(function () {
 
-    var userChosenColour = this.id;
+    userChosenColour = this.id;
 
     playSound(userChosenColour);
 
     userSavedPattern(userChosenColour);
+    clickedColor = userChosenColour;
 
-    checkAnswer();
-    
+
+    checkAnswer(level);
+
+
 
 });
 
@@ -112,13 +117,46 @@ function playSound(name) {
 //This function compares the users imput with the random imput pattern.
 function checkAnswer() {
 
-    var answer = (userClickedPattern.toString() === randomPattern.toString());
 
-    if (answer == true){
+
+    //var answer = (randomPattern[level].toString() === userChosenColour);
+    var counter = 0;
+
+
+
+
+//working on the loop waiting for the user to imput all the values before running a new random pattern
+    if (randomPattern[level].toString() === userChosenColour && counter < randomPattern.length) {
+
         setTimeout(() => {
             nextSequence();
+
         }
             , 1000);
+
+    }else{
+
+
+
+
+    }
+
+
+
+
+        userClickedPattern = [];
+        while (counter < randomPattern.length) {
+
+            setTimeout(() => {
+                nextSequence();
+
+            }
+                , 1000);
+
+            counter = counter + 1;
+
+        }
+
     } else {
         alert("You have lost!")
     }
