@@ -5,6 +5,13 @@ var clickedColor;
 var userChosenColour;
 
 var started = false;
+//This function resets the game.
+function startOver() {
+    randomPattern = [];
+    level = 0;
+    started = false;
+    $("#level-title").text("Press A Key to Start");
+}
 
 
 $("body").keypress(function () {
@@ -32,12 +39,10 @@ function nextSequence() {
 
     randomSavedPattern(randomChosenColor);
 
-
     //alert(copy);
     for (var i = 0; i < randomPattern.length; i++) {
         task(i);
     }
-
 }
 
 
@@ -62,8 +67,6 @@ function input() {
 
     checkAnswer(level);
 
-
-
 }
 
 function randomSavedPattern(randomColor) {
@@ -86,7 +89,6 @@ function animatePress(currentColour) {
         $("#" + currentColour).removeClass(".pressed").addClass(prevColor);
     }
         , 100);
-
 };
 
 function playSound(name) {
@@ -112,12 +114,9 @@ function playSound(name) {
             yellow.play();
             animatePress(name);
             break;
-
         default:
             console.log("error");
     }
-
-
 }
 
 //This function compares the users imput with the random imput pattern.
@@ -133,17 +132,24 @@ function checkAnswer() {
         }
             , 1000);
     } else {
+        $("#level-title").text("Game Over!");
         $("body").addClass("game-over");
 
         setTimeout(() => {
             $("body").removeClass("game-over").addClass("body");
         }
             , 200);
-        $("#level-title").text("Game Over!");
+
         var error = new Audio("sounds/wrong.mp3");
         error.play();
-    }
 
+        setTimeout(() => {
+            startOver();
+        }
+            , 2000);
+    }
 }
+
+
 
 
