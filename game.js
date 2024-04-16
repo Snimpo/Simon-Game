@@ -1,11 +1,23 @@
 var userClickedPattern = [];
 var randomPattern = [];
 var level = 0;
+var clickedColor;
+var userChosenColour;
 
-$("body").on("keydown", nextSequence()); 
+var started = false;
 
-function nextSequence(){
 
+$("body").keypress(function () {
+    if (!started) {
+        nextSequence();
+        started = true;
+    }
+});
+
+
+function nextSequence() {
+    userClickedPattern = [];
+    level++;
     $("#level-title").text("Level " + level);
 
     var gamePattern = [];
@@ -19,41 +31,40 @@ function nextSequence(){
     gamePattern.push(randomChosenColor);
 
     randomSavedPattern(randomChosenColor);
-    var copy = randomPattern.map((x)=>x) ; // Shallow copy
+
 
     //alert(copy);
-    for(var i = 0; i < randomPattern.length;i++){
+    for (var i = 0; i < randomPattern.length; i++) {
         task(i);
     }
-    level = level + 1;
 
-    
 }
 
 
 function task(i) {
-    setTimeout(function() {
+    setTimeout(function () {
         playSound(randomPattern[i]);
     }, 700 * i);
 }
 
-
-
-
-
-
 $(".btn").click(function () {
+    userChosenColour = this.id;
+    input();
+});
 
-    var userChosenColour = this.id;
+function input() {
 
     playSound(userChosenColour);
 
     userSavedPattern(userChosenColour);
 
-    checkAnswer();
-    
+    clickedColor = userChosenColour;
 
-});
+    checkAnswer(level);
+
+
+
+}
 
 function randomSavedPattern(randomColor) {
     randomPattern.push(randomColor);
@@ -82,23 +93,23 @@ function playSound(name) {
 
     switch (name) {
         case "red":
-            var crash = new Audio("sounds/red.mp3");
-            crash.play();
+            var red = new Audio("sounds/red.mp3");
+            red.play();
             animatePress(name);
             break;
         case "blue":
-            var kick = new Audio("sounds/blue.mp3");
-            kick.play();
+            var blue = new Audio("sounds/blue.mp3");
+            blue.play();
             animatePress(name);
             break;
         case "green":
-            var snare = new Audio("sounds/green.mp3");
-            snare.play();
+            var green = new Audio("sounds/green.mp3");
+            green.play();
             animatePress(name);
             break;
         case "yellow":
-            var tom1 = new Audio("sounds/yellow.mp3");
-            tom1.play();
+            var yellow = new Audio("sounds/yellow.mp3");
+            yellow.play();
             animatePress(name);
             break;
 
@@ -112,16 +123,27 @@ function playSound(name) {
 //This function compares the users imput with the random imput pattern.
 function checkAnswer() {
 
-    var answer = (userClickedPattern.toString() === randomPattern.toString());
+    var lastRandomElement = randomPattern.slice(-1);
 
-    if (answer == true){
+    var answer = (userClickedPattern.toString() === lastRandomElement.toString());
+
+    if (answer == true) {
         setTimeout(() => {
             nextSequence();
         }
             , 1000);
     } else {
-        alert("You have lost!")
+        $("body").addClass("game-over");
+
+        setTimeout(() => {
+            $("body").removeClass("game-over").addClass("body");
+        }
+            , 200);
+        $("#level-title").text("Game Over!");
+        var error = new Audio("sounds/wrong.mp3");
+        error.play();
     }
 
-
 }
+
+
